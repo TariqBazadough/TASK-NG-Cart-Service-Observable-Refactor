@@ -27,4 +27,12 @@ export class ProductDetailComponent {
   addToCart() {
     this.product && this.cartService.addToCart(this.product);
   }
+
+  getCurrentStock(): number {
+    if (!this.product) return 0;
+    const inCart =
+      this.cartService.getCart().find((i) => i.id === this.product!.id)
+        ?.quantity || 0;
+    return this.product.stock - inCart;
+  }
 }
