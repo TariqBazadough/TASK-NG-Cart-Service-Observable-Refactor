@@ -12,8 +12,19 @@ import { CurrencyPipe } from '@angular/common';
 })
 export class CartComponent {
   cartItems = this.cartService.getCart();
+    
+  
 
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService) {
+    this.cartService.cartObservable.subscribe({
+      next:(val) =>{
+        this.cartItems = val
+      }
+
+    })
+  }
+  
+  
 
   increment(item: Product) {
     this.cartService.incrementQuantity(item.id);
