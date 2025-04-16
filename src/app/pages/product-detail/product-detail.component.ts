@@ -17,7 +17,8 @@ export class ProductDetailComponent {
   constructor(
     private route: ActivatedRoute,
     private cartService: CartService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
