@@ -11,9 +11,15 @@ import { CurrencyPipe } from '@angular/common';
   styleUrl: './cart.component.css',
 })
 export class CartComponent {
-  cartItems = this.cartService.getCart();
+  cartItems: (Product & { quantity: number })[] = [];
 
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService) {
+    cartService.cart$.subscribe({
+      next: (val) => {
+        this.cartItems = val;
+      },
+    });
+  }
 
   increment(item: Product) {
     this.cartService.incrementQuantity(item.id);
@@ -21,17 +27,14 @@ export class CartComponent {
 
   decrement(item: Product) {
     this.cartService.decrementQuantity(item.id);
-    this.cartItems = this.cartService.getCart();
   }
 
   remove(item: Product) {
     this.cartService.removeFromCart(item.id);
-    this.cartItems = this.cartService.getCart();
   }
 
   clearCart() {
     this.cartService.clearCart();
-    this.cartItems = this.cartService.getCart();
   }
 
   getTotal() {

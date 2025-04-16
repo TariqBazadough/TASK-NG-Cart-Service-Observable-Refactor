@@ -1,34 +1,35 @@
 import { Injectable } from '@angular/core';
 import { Product } from '../../data/products';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private cartItems: (Product & { quantity: number })[] = [];
+  cart = new BehaviorSubject<(Product & { quantity: number })[]>([]);
+  cart$ = this.cart.asObservable();
 
   addToCart(product: Product) {
-    const item = this.cartItems.find((p) => p.id === product.id);
+    const item = this.cart.getValue().find((p) => p.id === product.id);
+    if (item) {
+      if (item.quantity < item.stock) {
+        item.quantity++;
+        // this.cart.next(this.cart.getValue());
+      }
+    } else {
+      this.cart.next([...this.cart.getValue(), { ...product, quantity: 1 }]);
+    }
+  }
+
+  incrementQuantity(productId: number) {
+    const item = this.cart.getValue().find((p) => p.id === productId);
     if (item) {
       if (item.quantity < item.stock) {
         item.quantity++;
       }
-    } else {
-      this.cartItems.push({ ...product, quantity: 1 });
-    }
-  }
-
-  getCart() {
-    return this.cartItems;
-  }
-
-  incrementQuantity(productId: number) {
-    const item = this.cartItems.find((p) => p.id === productId);
-    if (item && item.quantity < item.stock) {
-      item.quantity++;
     }
   }
 
   decrementQuantity(productId: number) {
-    const item = this.cartItems.find((p) => p.id === productId);
+    const item = this.cart.getValue().find((p) => p.id === productId);
     if (item) {
       item.quantity--;
       if (item.quantity <= 0) {
@@ -38,17 +39,16 @@ export class CartService {
   }
 
   removeFromCart(productId: number) {
-    this.cartItems = this.cartItems.filter((p) => p.id !== productId);
+    const updatedCart = this.cart.getValue().filter((p) => p.id !== productId);
+    this.cart.next(updatedCart);
   }
 
   clearCart() {
-    this.cartItems = [];
+    this.cart.next([]);
   }
 
   getTotal() {
-    return this.cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    const item = this.cart.getValue();
+    return item.reduce((total, item) => total + item.price * item.quantity, 0);
   }
 }
