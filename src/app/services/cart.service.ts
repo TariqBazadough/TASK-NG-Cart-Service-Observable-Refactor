@@ -8,67 +8,6 @@ export class CartService {
   cart = new BehaviorSubject<(Product & { quantity: number })[]>([]);
   cart$ = this.cart.asObservable();
 
-  // total$: Observable<number> = this.cart.pipe(
-  //   map((items) =>
-  //     items.reduce((total, item) => total + item.price * item.quantity, 0)
-  //   )
-  // );
-
-  // addToCart(product: Product) {
-  //   this.cart.subscribe((value) => {
-  //     const item = value.find((p) => p.id === product.id);
-  //     if (item) {
-  //       if (item.quantity < item.stock) {
-  //         item.quantity++;
-  //       }
-  //     } else {
-  //       value.push({ ...product, quantity: 1 });
-  //     }
-  //   });
-  // }
-
-  // // getCart() {
-  // //   return this.cartItems;
-  // // }
-
-  // incrementQuantity(productId: number) {
-  //   this.cart.subscribe((value) => {
-  //     const item = value.find((p) => p.id === productId);
-  //     if (item && item.quantity < item.stock) {
-  //       item.quantity++;
-  //     }
-  //   });
-  // }
-
-  // decrementQuantity(productId: number) {
-  //   this.cart.subscribe((value) => {
-  //     const item = value.find((p) => p.id === productId);
-  //     if (item && item.quantity > 1) {
-  //       item.quantity--;
-  //     } else {
-  //       this.removeFromCart(productId);
-  //     }
-  //   });
-  // }
-
-  // removeFromCart(productId: number) {
-  //   this.cart.subscribe((value) => {
-  //     value = value.filter((p) => p.id !== productId);
-  //     this.cart.next(value);
-  //   });
-  // }
-
-  // clearCart() {
-  //   this.cart.next([]);
-  // }
-
-  // getTotal() {
-  //   return this.cart.value.reduce(
-  //     (total, item) => total + item.price * item.quantity,
-  //     0
-  //   );
-  // }
-
   addToCart(product: Product) {
     const item = this.cart.getValue().find((p) => p.id === product.id);
     if (item) {
