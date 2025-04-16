@@ -1,6 +1,14 @@
 <header class="header">
   <nav class="nav">
     <a routerLink="/products" routerLinkActive="active">Products</a>
-    <a routerLink="/cart" routerLinkActive="active">Cart</a>
+    <a routerLink="/cart" routerLinkActive="active" class="relative">
+      Cart @if (cartCount > 0) {
+      <span
+        class="absolute -top-2 -right-3 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
+      >
+        {{ cartCount }}
+      </span>
+      }
+    </a>
   </nav>
 </header>
