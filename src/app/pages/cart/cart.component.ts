@@ -1,17 +1,19 @@
 import { Component } from '@angular/core';
 import { CartService } from '../../services/cart.service';
 import { Product } from '../../../data/products';
-import { CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, CommonModule, AsyncPipe],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
 export class CartComponent {
-  cartItems = this.cartService.getCart();
+  cartItems$ = this.cartService.cartItems$;
+  total$ = this.cartService.getTotal();
 
   constructor(private cartService: CartService) {}
 
@@ -21,20 +23,17 @@ export class CartComponent {
 
   decrement(item: Product) {
     this.cartService.decrementQuantity(item.id);
-    this.cartItems = this.cartService.getCart();
   }
 
   remove(item: Product) {
     this.cartService.removeFromCart(item.id);
-    this.cartItems = this.cartService.getCart();
   }
 
   clearCart() {
     this.cartService.clearCart();
-    this.cartItems = this.cartService.getCart();
   }
 
-  getTotal() {
-    return this.cartService.getTotal();
+  trackById(index: number, item: Product): number {
+    return item.id;
   }
 }
