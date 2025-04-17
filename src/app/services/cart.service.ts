@@ -6,7 +6,7 @@ export type CartItem = Product & { quantity: number };
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private cartSubject = new BehaviorSubject<CartItem[]>([]);
+  //private cartSubject = new BehaviorSubject<CartItem[]>([]);
   cart$ = signal<CartItem[]>([]);
   // Newcart = signal([]);
   addToCart(product: Product): void {
