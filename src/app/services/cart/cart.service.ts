@@ -31,11 +31,7 @@ export class CartService {
   incrementQuantity(productId: number): void {
     const updatedCart = this.cart().map((item) => {
       if (item.id === productId && item.quantity < item.stock) {
-        this.toastService.success(`Increased quantity of "${item.name}"`);
         return { ...item, quantity: item.quantity + 1 };
-      }
-      if (item.id === productId && item.quantity >= item.stock) {
-        this.toastService.error(`Reached stock limit for "${item.name}"`);
       }
       return item;
     });
@@ -44,16 +40,19 @@ export class CartService {
   }
 
   decrementQuantity(productId: number): void {
-    const updatedCart = this.cart()
-      .map((item) => {
-        if (item.id === productId) {
-          return { ...item, quantity: item.quantity - 1 };
-        }
-        return item;
-      })
-      .filter((item) => item.quantity > 0);
+    const currentCart = this.cart();
+    const item = currentCart.find((item) => item.id === productId);
 
-    this.cart.update(() => updatedCart);
+    if (!item) return;
+
+    if (item.quantity <= 1) {
+      this.removeFromCart(productId);
+    } else {
+      const updatedCart = currentCart.map((item) =>
+        item.id === productId ? { ...item, quantity: item.quantity - 1 } : item
+      );
+      this.cart.update(() => updatedCart);
+    }
   }
 
   removeFromCart(productId: number): void {
