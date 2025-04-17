@@ -1,0 +1,8 @@
+<div class="toast-container">
+  @for (toast of toasts(); track toast.id) {
+  <div class="toast" [ngClass]="toast.type.toLowerCase()">
+    <!-- ngClass for css -->
+    {{ toast.message }}
+  </div>
+  }
+</div>
