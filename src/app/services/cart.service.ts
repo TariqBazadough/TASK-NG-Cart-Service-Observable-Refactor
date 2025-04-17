@@ -12,7 +12,7 @@ export class CartService {
 
   constructor(){
     effect(() => {
-      console.log("CART SUBJECT: " , this.cartSubject)
+      console.log("CART SUBJECT: " , this.cartSubject())
     })
   }
 
@@ -38,7 +38,7 @@ export class CartService {
       return item;
     });
 
-    //this.cartSubject.next(updatedCart);
+    this.cartSubject.update(c=> c = updatedCart)
   }
 
   decrementQuantity(productId: number): void {
@@ -50,42 +50,13 @@ export class CartService {
         return item;
       })
       .filter(item => item.quantity > 0);
-
-
-      // const updatedCart = computed<CartItem>(() => {
-      //       this.cartSubject()
-      //     .map(item => {
-      //       if (item.id === productId) {
-      //         return { ...item, quantity: item.quantity - 1 };
-      //       }
-      //       return item;
-      //     })
-      //     .filter(item => item.quantity > 0)
-      //     })
-
-/** */
-      // const updatedCart = this.cartSubject()
-      // .map(item => {
-      //   if (item.id === productId) {
-      //     return computed(()=> item.quantity = item.quantity - 1);
-      //   }
-      //   return item;
-      // })
-      // .filter(item => item.quantity > 0);
-/** */
-
-      this.cartSubject.set(updatedCart)
-
-
-
-
-          //const t = computed(()=> this.cart)
+      console.log("decrementQuantity: ", updatedCart)
+      this.cartSubject.update(c=> c = updatedCart)
   }
 
   removeFromCart(productId: number): void {
     const updatedCart = this.cartSubject().filter(item => item.id !== productId);
-    //this.cartSubject.next(updatedCart);
-  }
+    this.cartSubject.update(c=> c = updatedCart)  }
 
   clearCart(): void {
     //this.cartSubject.next([]);

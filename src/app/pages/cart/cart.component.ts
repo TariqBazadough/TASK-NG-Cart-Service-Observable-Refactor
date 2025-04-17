@@ -14,7 +14,7 @@ export class CartComponent {
   //cart$ = this.cartService.cart$;
   
   
-   cartService1 = this.cartService.cartSubject();
+   cartService1 = this.cartService.cartSubject;
  
 
 
