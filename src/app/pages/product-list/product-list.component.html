@@ -2,4 +2,14 @@
   @for (product of products; track product.id) {
   <app-product-card [product]="product"></app-product-card>
   }
+  <h1>{{ counter() }}</h1>
+  <h1>Double Count: {{ doubleCounter() }}</h1>
+  <h1>multiply {{ multiply() }}</h1>
+  <button (click)="inc()">+</button>
+  <button (click)="dec()">-</button>
+  <button (click)="setCount()">set to 10</button>
+  <button (click)="resetCount()">set to 0</button>
+  <br />
+
+  <button (click)="isMultiply()">multiply count</button>
 </div>
