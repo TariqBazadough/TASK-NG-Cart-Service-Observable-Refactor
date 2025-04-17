@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CartService } from '../../services/cart.service';
 import { Product } from '../../../data/products';
 import { AsyncPipe, CurrencyPipe } from '@angular/common';
