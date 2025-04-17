@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CartService } from '../../services/cart.service';
+import { Component, output , signal} from '@angular/core';
+import { CartItem, CartService } from '../../services/cart.service';
 import { Product } from '../../../data/products';
 import { AsyncPipe, CurrencyPipe } from '@angular/common';
 
@@ -11,9 +11,16 @@ import { AsyncPipe, CurrencyPipe } from '@angular/common';
   styleUrl: './cart.component.css',
 })
 export class CartComponent {
-  cart$ = this.cartService.cart$;
+  //cart$ = this.cartService.cart$;
+  
+  
+   cartService1 = this.cartService.cartSubject();
+ 
 
-  constructor(private cartService: CartService) {}
+
+  constructor(private cartService: CartService) {
+    console.log("CART SUBJECT: " , this.cartService1)
+  }
 
   increment(item: Product) {
     this.cartService.incrementQuantity(item.id);
