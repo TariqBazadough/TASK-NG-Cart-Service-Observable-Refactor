@@ -1,17 +1,24 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, signal, computed } from '@angular/core';
 import { Product } from '../../data/products';
 
 export type CartItem = Product & { quantity: number };
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private cartSubject = new BehaviorSubject<CartItem[]>([]);
-  cart$ = this.cartSubject.asObservable();
+  private cartSignal = signal<CartItem[]>([]);
+
+  total = computed(() =>
+    this.cartSignal().reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    )
+  );
+
+  cartItem$ = this.cartSignal;
 
   addToCart(product: Product): void {
-    const currentCart = [...this.cartSubject.value];
-    const item = currentCart.find(p => p.id === product.id);
+    const currentCart = [...this.cartSignal()];
+    const item = currentCart.find((p) => p.id === product.id);
 
     if (item && item.quantity < item.stock) {
       item.quantity++;
@@ -19,52 +26,49 @@ export class CartService {
       currentCart.push({ ...product, quantity: 1 });
     }
 
-    this.cartSubject.next(currentCart);
+    this.cartSignal.set(currentCart);
   }
 
   incrementQuantity(productId: number): void {
-    const updatedCart = this.cartSubject.value.map(item => {
+    const updatedCart = this.cartSignal().map((item) => {
       if (item.id === productId && item.quantity < item.stock) {
         return { ...item, quantity: item.quantity + 1 };
       }
       return item;
     });
 
-    this.cartSubject.next(updatedCart);
+    this.cartSignal.set(updatedCart);
   }
 
   decrementQuantity(productId: number): void {
-    const updatedCart = this.cartSubject.value
-      .map(item => {
+    const updatedCart = this.cartSignal()
+      .map((item) => {
         if (item.id === productId) {
           return { ...item, quantity: item.quantity - 1 };
         }
         return item;
       })
-      .filter(item => item.quantity > 0);
+      .filter((item) => item.quantity > 0);
 
-    this.cartSubject.next(updatedCart);
+    this.cartSignal.set(updatedCart);
   }
 
   removeFromCart(productId: number): void {
-    const updatedCart = this.cartSubject.value.filter(item => item.id !== productId);
-    this.cartSubject.next(updatedCart);
+    const updatedCart = this.cartSignal().filter(
+      (item) => item.id !== productId
+    );
+    this.cartSignal.set(updatedCart);
   }
 
   clearCart(): void {
-    this.cartSubject.next([]);
+    this.cartSignal.set([]);
   }
 
   getTotal(): number {
-    return this.cartSubject.value.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    return this.total();
   }
 
   getCartSnapshot(): CartItem[] {
-    return this.cartSubject.value;
+    return this.cartSignal();
   }
 }
-
-
