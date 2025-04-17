@@ -1,60 +1,80 @@
-import { Injectable } from '@angular/core';
+import { effect, Injectable, signal } from '@angular/core';
 import { Product } from '../../data/products';
-import { BehaviorSubject } from 'rxjs';
-
+import { ToastService } from './toast.service';
 export type CartItem = Product & { quantity: number };
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-    cartItems = new BehaviorSubject<CartItem[]>([]);
-  cartItems$ = this.cartItems.asObservable();
+  private cartItems = signal<CartItem[]>([]);
+  cartItems$ = this.cartItems;
 
-  addToCart(product: Product) {
-    const item = this.cartItems.value.find((p) => p.id === product.id);
+  constructor(private toastService: ToastService) {}
+
+  addToCart = (product: Product) => {
+    const item = this.cartItems().find((p) => p.id === product.id);
+
     if (item) {
       if (item.quantity < item.stock) {
         item.quantity++;
-        this.cartItems.next(this.cartItems.value);
+        this.toastService.showToast(
+          `🛒 ${product.name} added to cart`,
+          'success'
+        );
+      } else {
+        this.toastService.showToast(
+          '❌ You can’t exceed the stock limit',
+          'error'
+        );
       }
     } else {
-      this.cartItems.next([
-        ...this.cartItems.value,
-        { ...product, quantity: 1 },
-      ]);
+      this.cartItems.set([...this.cartItems(), { ...product, quantity: 1 }]);
+      this.toastService.showToast(
+        `🛒 ${product.name} added to cart`,
+        'success'
+      );
     }
-  }
+  };
 
-  incrementQuantity(productId: number) {
-    const item = this.cartItems.value.find((p) => p.id === productId);
+  incrementQuantity = (productId: number) => {
+    const item = this.cartItems().find((p) => p.id === productId);
     if (item && item.quantity < item.stock) {
       item.quantity++;
+      // this.cartItems.set([...this.cartItems(), item]);
+    } else {
+      this.toastService.showToast(
+        '❌ You can’t exceed the stock limit',
+        'error'
+      );
     }
-    this.cartItems.next(this.cartItems.value);
-  }
+  };
 
-  decrementQuantity(productId: number) {
-    const item = this.cartItems.value.find((p) => p.id === productId);
+  decrementQuantity = (productId: number) => {
+    const item = this.cartItems().find((p) => p.id === productId);
     if (item) {
       item.quantity--;
       if (item.quantity <= 0) {
         this.removeFromCart(productId);
+        this.toastService.showToast(
+          `🛒 ${item.name} removed from cart`,
+          'success'
+        );
       }
     }
-    this.cartItems.next(this.cartItems.value);
-  }
+  };
 
-  removeFromCart(productId: number) {
-    this.cartItems.next(this.cartItems.value.filter((p) => p.id !== productId));
-  }
+  removeFromCart = (productId: number) => {
+    this.cartItems.set(this.cartItems().filter((p) => p.id !== productId));
+  };
 
-  clearCart() {
-    this.cartItems.next([]);
-  }
+  clearCart = () => {
+    this.cartItems.set([]);
+    this.toastService.showToast('Cart cleared');
+  };
 
-  getTotal() {
-    return this.cartItems.value.reduce(
+  getTotal = () => {
+    return this.cartItems().reduce(
       (total, item) => total + item.price * item.quantity,
       0
     );
-  }
+  };
 }
