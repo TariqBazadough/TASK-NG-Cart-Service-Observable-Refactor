@@ -2,6 +2,7 @@ import { computed, Injectable, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Product, PRODUCTS } from '../../data/products';
 import { ToastService } from './toast.service';
+//testing
 
 export type CartItem = Product & { quantity: number };
 
