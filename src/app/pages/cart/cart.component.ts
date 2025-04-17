@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { CartService } from '../../services/cart.service';
 import { Product } from '../../../data/products';
-import { AsyncPipe, CurrencyPipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CurrencyPipe, AsyncPipe],
+  imports: [CurrencyPipe],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
