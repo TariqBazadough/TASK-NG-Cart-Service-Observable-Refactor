@@ -11,30 +11,27 @@ import { CurrencyPipe } from '@angular/common';
   styleUrl: './cart.component.css',
 })
 export class CartComponent {
-  cartItems = this.cartService.getCart();
+  cartItems = this.cartService.cartItems$;
 
   constructor(private cartService: CartService) {}
 
-  increment(item: Product) {
+  increment = (item: Product) => {
     this.cartService.incrementQuantity(item.id);
-  }
+  };
 
-  decrement(item: Product) {
+  decrement = (item: Product) => {
     this.cartService.decrementQuantity(item.id);
-    this.cartItems = this.cartService.getCart();
-  }
+  };
 
-  remove(item: Product) {
+  remove = (item: Product) => {
     this.cartService.removeFromCart(item.id);
-    this.cartItems = this.cartService.getCart();
-  }
+  };
 
-  clearCart() {
+  clearCart = () => {
     this.cartService.clearCart();
-    this.cartItems = this.cartService.getCart();
-  }
+  };
 
-  getTotal() {
+  getTotal = () => {
     return this.cartService.getTotal();
-  }
+  };
 }
